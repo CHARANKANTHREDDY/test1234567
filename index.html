@@ -74,6 +74,7 @@
       height: 10px;
       top: -10px;
       animation: fall 5s linear infinite;
+      z-index: 999;
     }
 
     @keyframes fall {
@@ -101,7 +102,7 @@
       transform: scale(1.1);
     }
 
-    /* Vibrant Countdown Timer Style */
+    /* Countdown Timer */
     #countdown {
       font-size: 2.5em;
       margin-top: 20px;
@@ -124,7 +125,8 @@
   </style>
 </head>
 <body>
-  <h1>🎉 Advance Happy Birthday, Navya ! 🎂</h1>
+
+  <h1>🎉 Advance Happy Birthday, Navya! 🎂</h1>
   <p>Wishing you lots of love and joy on your special day!</p>
 
   <div class="gallery">
@@ -138,18 +140,17 @@
   <div id="countdown">Loading countdown...</div>
 
   <!-- Background Music -->
-  <audio id="bg-music" loop autoplay>
+  <!-- IMPORTANT: Start muted so autoplay works -->
+  <audio id="bg-music" autoplay loop muted>
     <source src="birthday-song.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
   </audio>
 
-  <button id="music-btn">🔊 Mute</button>
+  <button id="music-btn">🔊 Turn On Sound</button>
 
-  <!-- Confetti -->
   <script>
-    // Generate confetti
+    // Confetti
     for(let i=0; i<50; i++) {
-      let confetti = document.createElement("div");
+      const confetti = document.createElement("div");
       confetti.classList.add("confetti");
       confetti.style.left = Math.random() * 100 + "vw";
       confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
@@ -157,23 +158,22 @@
       document.body.appendChild(confetti);
     }
 
-    // Music toggle
+    // Music Logic
     const music = document.getElementById("bg-music");
     const btn = document.getElementById("music-btn");
+
+    // Unmute on first click anywhere
+    document.body.addEventListener("click", () => {
+      music.muted = false;
+    }, { once: true });
+
     btn.addEventListener("click", () => {
-      if (music.muted) {
-        music.muted = false;
-        btn.textContent = "🔊 Mute";
-      } else {
-        music.muted = true;
-        btn.textContent = "🔇 Unmute";
-      }
+      music.muted = !music.muted;
+      btn.textContent = music.muted ? "🔇 Turn On Sound" : "🔊 Mute";
     });
 
-    // Countdown Timer
+    // Countdown
     const countdownElement = document.getElementById("countdown");
-
-    // 🎯 Set your birthday date here
     const targetDate = new Date("2025-12-03T00:00:00");
 
     function updateCountdown() {
@@ -181,7 +181,7 @@
       const timeDifference = targetDate - now;
 
       if (timeDifference <= 0) {
-        countdownElement.innerHTML = "🎉 It's Your Birthday! 🎂";
+        countdownElement.innerHTML = "🎉 Happy Birthday Navya! 🎂";
         clearInterval(countdownInterval);
       } else {
         const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
