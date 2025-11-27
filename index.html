@@ -67,12 +67,12 @@
       box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     }
 
-    /* Confetti Effect */
+    /* Confetti */
     .confetti {
       position: fixed;
       width: 10px;
-      height: 10px;
-      top: -10px;
+     	height: 10px;
+     	top: -10px;
       animation: fall 5s linear infinite;
       z-index: 999;
     }
@@ -82,7 +82,7 @@
       100% { transform: translateY(100vh) rotate(360deg); }
     }
 
-    /* Music Button */
+    /* Music Toggle Button */
     #music-btn {
       position: fixed;
       bottom: 20px;
@@ -102,7 +102,7 @@
       transform: scale(1.1);
     }
 
-    /* Countdown Timer */
+    /* Countdown */
     #countdown {
       font-size: 2.5em;
       margin-top: 20px;
@@ -139,37 +139,44 @@
 
   <div id="countdown">Loading countdown...</div>
 
-  <!-- Background Music -->
-  <!-- IMPORTANT: Start muted so autoplay works -->
+  <!-- 🚨 Autoplay must be muted initially -->
   <audio id="bg-music" autoplay loop muted>
     <source src="birthday-song.mp3" type="audio/mpeg">
   </audio>
 
-  <button id="music-btn">🔊 Turn On Sound</button>
+  <button id="music-btn">🔇 Play Music</button>
 
   <script>
     // Confetti
-    for(let i=0; i<50; i++) {
+    for(let i = 0; i < 50; i++) {
       const confetti = document.createElement("div");
       confetti.classList.add("confetti");
       confetti.style.left = Math.random() * 100 + "vw";
-      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
-      confetti.style.animationDuration = (Math.random() * 3 + 2) + "s";
+      confetti.style.backgroundColor = `hsl(${Math.random()*360},100%,70%)`;
+      confetti.style.animationDuration = (Math.random()*3 + 2) + "s";
       document.body.appendChild(confetti);
     }
 
-    // Music Logic
+    // Music Controls
     const music = document.getElementById("bg-music");
     const btn = document.getElementById("music-btn");
 
-    // Unmute on first click anywhere
+    // 💥 Essential: first user click triggers real playback
     document.body.addEventListener("click", () => {
-      music.muted = false;
+        music.muted = false;
+        music.play();
+        btn.textContent = "🔊 Mute";
     }, { once: true });
 
     btn.addEventListener("click", () => {
-      music.muted = !music.muted;
-      btn.textContent = music.muted ? "🔇 Turn On Sound" : "🔊 Mute";
+      if (music.paused) {
+        music.play();
+        music.muted = false;
+        btn.textContent = "🔊 Mute";
+      } else {
+        music.pause();
+        btn.textContent = "🔇 Play Music";
+      }
     });
 
     // Countdown
@@ -178,22 +185,23 @@
 
     function updateCountdown() {
       const now = new Date();
-      const timeDifference = targetDate - now;
+      const diff = targetDate - now;
 
-      if (timeDifference <= 0) {
+      if (diff <= 0) {
         countdownElement.innerHTML = "🎉 Happy Birthday Navya! 🎂";
-        clearInterval(countdownInterval);
+        clearInterval(timer);
       } else {
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+        const d = Math.floor(diff / (1000*60*60*24));
+        const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+        const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+        const s = Math.floor((diff % (1000*60)) / 1000);
 
-        countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        countdownElement.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
       }
     }
 
-    const countdownInterval = setInterval(updateCountdown, 1000);
+    const timer = setInterval(updateCountdown, 1000);
   </script>
+
 </body>
 </html>
